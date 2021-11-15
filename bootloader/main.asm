@@ -12,19 +12,17 @@ det_lmem:                    ; detect memory
     ; AX should now contain the amount of continuous memory in KB
     ; starting from 0x00. This is the amount of RAM under 1MB
 
-    cmp     ax, 0           ; make sure there is no error
-    je      mem_err
+    jc mem_err
     mov     [l_mem], ax     ; store low memory
 det_umem:
     call    clr_reg         ; prepare for upper memory detection
     
 
 mem_err:
-    jnc     det_umem        ; go back to detecting if carry not set
 
 boot:   
-    times 512-($-$$) db 0
-    dw      0x55aa
+    times 510-($-$$) db 0
+    dw      0xaa55
 
 clr_reg:
     xor     ax, ax
