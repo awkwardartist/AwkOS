@@ -24,7 +24,7 @@ mem_err:
 
 boot:   
     times 512-($-$$) db 0
-    dw      0xAA55
+    dw      0x55aa
 
 clr_reg:
     xor     ax, ax
