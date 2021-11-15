@@ -12,14 +12,12 @@ det_lmem:                    ; detect memory
     ; AX should now contain the amount of continuous memory in KB
     ; starting from 0x00. This is the amount of RAM under 1MB
 
-    jc mem_err
     mov     [l_mem], ax     ; store low memory
 det_umem:
     call    clr_reg         ; prepare for upper memory detection
     
-
 mem_err:
-
+    jnc     det_umem
 boot:   
     times 510-($-$$) db 0
     dw      0xaa55
