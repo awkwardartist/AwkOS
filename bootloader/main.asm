@@ -1,6 +1,7 @@
-org 0x7c00
+org 0x7c00                  ; kernel SHOULD be loaded here
 
 section .text
+    ; I'm an asm wizard, wizzidi woo, computer science is coo
 entry:
     mov     [disk], dl      ; store disk ID
     call    clr_reg         ; clear general purpose regs
@@ -13,11 +14,35 @@ det_lmem:                    ; detect memory
     ; starting from 0x00. This is the amount of RAM under 1MB
 
     mov     [l_mem], ax     ; store low memory
-det_umem:
-    call    clr_reg         ; prepare for upper memory detection
+    call    clr_reg         ; prepare for next step
+
+enable_a20:
+    ; checks whether or not the A20 line has already been enabled by BIOS
+    ; if not, enable the A20 line 
+
+    cli                     ; disable interrupts
+
+    ; set ES
+    xor     ax, ax
+    mov     es, ax          ; es = 0
+
+    ; set DS
+    mov     ax, 0xFFFF      ; fill ax
+    mov     ds, ax          ; ds = 0xFFFF    
+
+    mov di, 0x0500
+    mov si, 0x0510
+
+    mov     al, byte [es:di]
+    push    ax              ; store 0x[es:di]FF
+
+    mov     al, byte [ds:si]
+    push    ax              ; store 0x[ds:si]FF
+
+    mov     byte [es:di], 0x00
+    mov     byte [ds:si], 0xFF
     
-mem_err:
-    jnc     det_umem
+
 boot:   
     times 510-($-$$) db 0
     dw      0xaa55
@@ -35,5 +60,4 @@ section .data
     
 section .bss
     u_mem:
-        resq 2
-        resw 1
+        
