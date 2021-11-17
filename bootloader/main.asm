@@ -1,4 +1,5 @@
-org 0x7c00                  ; kernel SHOULD be loaded here
+org 0x7c00                  ; kernel SHOULD be loaded here (or will be, once I load it)
+;                           ; god, BIOS do I have to do EVERYTHING myself :|
 
 section .text
     ; I'm an asm wizard, wizzidi woo, computer science is coo
@@ -42,6 +43,7 @@ enable_a20:
     mov     byte [es:di], 0x00
     mov     byte [ds:si], 0xFF
     
+    cmp     byte [es:di], 0x00
 
 boot:   
     times 510-($-$$) db 0
